@@ -1,8 +1,9 @@
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status, generics, mixins, viewsets
+from rest_framework.views import APIView
 
 from django.shortcuts import get_object_or_404
-from rest_framework.views import APIView
 
 from cinema.models import Movie, Genre, Actor, CinemaHall
 from cinema.serializers import (
@@ -14,12 +15,12 @@ from cinema.serializers import (
 
 
 class GenreList(APIView):
-    def get(self, request) -> Response:
+    def get(self, request: Request) -> Response:
         genres = Genre.objects.all()
         serializer = GenreSerializer(genres, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request) -> Response:
+    def post(self, request: Request) -> Response:
         serializer = GenreSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -30,17 +31,17 @@ class GenreDetail(APIView):
     def get_object(self, pk) -> Genre:
         return get_object_or_404(Genre, pk=pk)
 
-    def get(self, request, pk) -> Response:
+    def get(self, request: Request, pk) -> Response:
         serializer = GenreSerializer(self.get_object(pk=pk))
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def put(self, request, pk) -> Response:
+    def put(self, request: Request, pk) -> Response:
         serializer = GenreSerializer(self.get_object(pk=pk), data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def patch(self, request, pk) -> Response:
+    def patch(self, request: Request, pk) -> Response:
         serializer = GenreSerializer(
             self.get_object(pk=pk),
             data=request.data,
@@ -50,7 +51,7 @@ class GenreDetail(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def delete(self, request, pk) -> Response:
+    def delete(self, request: Request, pk) -> Response:
         self.get_object(pk=pk).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
